@@ -1,39 +1,68 @@
 package io.github.mhagnumdw;
 
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ro.pippo.core.Application;
+
+import com.google.inject.Inject;
+import com.google.inject.persist.PersistService;
+
+import io.github.mhagnumdw.filter.PersistFilter;
+import ro.pippo.controller.Controller;
+import ro.pippo.controller.ControllerApplication;
 
 /**
- * A simple Pippo application.
+ * Configuração da aplicação.
  *
  * @see io.github.mhagnumdw.PippoLauncher#main(String[])
  */
-public class PippoApplication extends Application {
+public class PippoApplication extends ControllerApplication {
 
-    private final static Logger log = LoggerFactory.getLogger(PippoApplication.class);
+    private static final Logger log = LoggerFactory.getLogger(PippoApplication.class);
+
+    @Inject
+    private PersistService service;
+
+//    @Inject
+//    private NotaService notaService;
+
+    @Inject
+    // private List<? extends Controller> controllers;
+    // private Set<? extends Controller> controllers;
+    // private Set<Controller> controllers;
+    private Set<Controller> controllers;
 
     @Override
     protected void onInit() {
-        getRouter().ignorePaths("/favicon.ico");
+        log.info("onInit()");
 
-        // send 'Hello World' as response
-        GET("/", routeContext -> routeContext.send("Hello World"));
+        // http://docs.jboss.org/hibernate/orm/5.2/topical/html_single/logging/Logging.html
+        System.setProperty("org.jboss.logging.provider", "slf4j"); // Necessário para o Hibernate quando se usa o slf4j
 
-        // send a template as response
-        GET("/template", routeContext -> {
-            String message;
+        // PERSISTENCE
+        log.info("Starting Persistence Unit (JPA)");
+        service.start(); // start persistence unit (JPA)
 
-            String lang = routeContext.getParameter("lang").toString();
-            if (lang == null) {
-                message = getMessages().get("pippo.greeting", routeContext);
-            } else {
-                message = getMessages().get("pippo.greeting", lang);
-            }
+        // ENDPOINT / API
+        // setControllerFactory(new GuiceControllerFactory(injector)); // registrando GuiceControllerFactory
 
-            routeContext.setLocal("greeting", message);
-            routeContext.render("hello");
-        });
+        // add routes for static content
+        addPublicResourceRoute();
+        addWebjarsResourceRoute();
+
+        // **************************************************************************
+        // ****** FILTER's - A Ordem É Relevante! ***********************************
+        // **************************************************************************
+
+        ANY("/webapp/api/.*", PersistFilter.BEGIN);
+
+        addControllers(controllers.toArray(new Controller[0]));
+
+        // Cleanup - Deve ser realmente a última chamada do método onInit() e "/.*"
+        ANY("/webapp/api/.*", PersistFilter.END).runAsFinally();
+
     }
 
 }

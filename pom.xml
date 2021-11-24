@@ -35,9 +35,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <pippo.version>1.13.1</pippo.version>
+        <pippo.version>1.14.0-SNAPSHOT</pippo.version>
         <slf4j.version>1.7.7</slf4j.version>
         <main.class>io.github.mhagnumdw.PippoLauncher</main.class>
+
+        <hibernate.version>5.4.21.Final</hibernate.version>
+        <hibernate-validator.version>5.4.3.Final</hibernate-validator.version>
+        <!--
+        <google.gson.version>2.6.2</google.gson.version>
+        -->
+        <google.guice.version>4.2.0</google.guice.version> <!-- porque eh a mesma versao que o pippo-guice traz -->
     </properties>
 
     <dependencies>
@@ -60,6 +67,110 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.7</version>
         </dependency>
+
+        <dependency>
+            <groupId>ro.pippo</groupId>
+            <artifactId>pippo-guice</artifactId>
+            <version>${pippo.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.inject.extensions/guice-persist -->
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-persist</artifactId>
+            <version>${google.guice.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.inject.extensions/guice-assistedinject -->
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-assistedinject</artifactId>
+            <version>${google.guice.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.inject.extensions/guice-multibindings -->
+        <!-- Since Guice 4.2, multibindings support has moved to Guice core. Before that, you need to depend on the guice-multibindings extension -->
+        <!--
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-multibindings</artifactId>
+            <version>${google.guice.version}</version>
+        </dependency>
+        -->
+
+        <!-- Necessário para realizar os logs do Hibernate 4.0 pra cima -->
+        <!-- http://docs.jboss.org/hibernate/orm/5.2/topical/html_single/logging/Logging.html -->
+        <!-- https://mvnrepository.com/artifact/org.jboss.logging/jboss-logging -->
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.3.0.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <!-- Bean Validation 1.1 (JSR 349) -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
+        </dependency>
+        <!-- necessário pra usar a validação, conforme doc: https://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/#validator-gettingstarted-createproject -->
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.1-b08</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+        </dependency>
+
+        <!-- http://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.11</version>
+        </dependency>
+
+        <!-- http://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <!--
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${google.gson.version}</version>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>ro.pippo</groupId>
+            <artifactId>pippo-gson</artifactId>
+            <version>${pippo.version}</version>
+        </dependency>
+
+        <!-- É a partir da versão 22.0 que tem o Tables.synchronizedTable -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <!-- Android? Isso mesmo! Pois é essa a versão que vem -->
+            <!-- com o Guice 4.2.0 que é trazido pelo Pippo-Guice 1.11.0 -->
+            <!-- <version>23.6-android</version> -->
+            <!-- A versão 23+ deixa de ter o construtor 'new SimpleTimeLimiter()' -->
+            <!--  que é usado na classe DockerRule.java -->
+            <version>22.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.194</version>
+        </dependency>
+
     </dependencies>
 
     <build>

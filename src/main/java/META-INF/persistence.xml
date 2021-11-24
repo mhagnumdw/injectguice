@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+
+    <persistence-unit name="appPU" transaction-type="RESOURCE_LOCAL">
+        <!--
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        -->
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+
+            <!-- Hibernate 5.2: none (default value), create-only, drop, create, create-drop, validate, and update -->
+            <property name="hibernate.hbm2ddl.auto" value="create" />
+
+            <property name="hibernate.hbm2ddl.import_files" value="load.sql" />
+
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:./db/h2/inject/inject;AUTO_SERVER=true" />
+            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.password" value="sa"/>
+
+            <property name="hibernate.show_sql" value="false" />
+            <property name="hibernate.use_sql_comments" value="true" />
+            <property name="hibernate.format_sql" value="false" />
+
+            <!-- AUTO  : The Session is sometimes flushed before query execution -->
+            <!-- COMMIT: The Session is only flushed prior to a transaction commit -->
+            <property name="org.hibernate.flushMode" value="COMMIT"/> <!-- default: AUTO -->
+
+            <property name="hibernate.generate_statistics" value="true" />
+
+            <!--
+            hibernate.session.events.log padrão é true se as estatísticas estiverem ativadas: hibernate.generate_statistics=true
+            Se estiver em true: a cada "request" na Session do Hibernate a classe org.hibernate.engine.internal.StatisticalLoggingSessionEventListener
+            loga como INFO estatísticas deste "request". Pode ser interessante exibir esta e outras informações provenientes das
+            Estatísticas do Hibernate (org.hibernate.stat.Statistics) na tela do usuário APENAS em desenvolvimento, assim como faz o XRebel
+            da zeroturnaround.com
+            -->
+            <property name="hibernate.session.events.log" value="false" />
+
+            <property name="hibernate.connection.autocommit" value="false"/> <!-- default é false -->
+
+            <property name="hibernate.connection.pool_size" value="30"/>
+
+            <!-- Defines precedence of null values in ORDER BY clause. Defaults to none which varies between RDBMS implementation. -->
+            <property name="hibernate.order_by.default_null_ordering" value="none"/>
+            <property name="hibernate.query.startup_check" value="true"/> <!-- default é true. Should named queries be checked during startup? -->
+
+            <!-- OH MY GOD !!!
+            Initialize Lazy Proxies or Collections outside a given Transactional Persistence Context.
+            Although enabling this configuration can make LazyInitializationException go away,
+            it’s better to use a fetch plan that guarantees that all properties are properly initialised before the Session is closed.
+            In reality, you shouldn’t probably enable this setting anyway.
+             -->
+            <property name="hibernate.enable_lazy_load_no_trans" value="false"/> <!-- default é false -->
+
+            <!--
+            <property name="hibernate.hbm2ddl.import_files_sql_extractor" value="org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor" />
+            -->
+
+        </properties>
+    </persistence-unit>
+
+</persistence>
